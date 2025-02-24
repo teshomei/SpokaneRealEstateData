@@ -5,13 +5,13 @@ source: PropertySales is duckdb.table('Property*.csv')extend{
 >>>malloy
 source: parcels is duckdb.table('./Parcels2.csv')extend{
     primary_key:`Parcel Number`
-    join_one: PropertySales with info
+    join_one: PropertySales on `Parcel Number` = PropertySales.Parcel
 
 }
 >>>malloy
 run: parcels ->{
     where: `Parcel Number` = "25203.9015"
-    group_by: streetnumber
+    select: PropertySales.document_date
 
 }
 >>>malloy
