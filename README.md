@@ -15,9 +15,15 @@ The primary motivation for this project is to analyze real estate sales data in 
 <img width="982" alt="Screenshot 2025-03-06 at 10 00 41 PM" src="https://github.com/user-attachments/assets/1f2d9de2-e4b1-48d3-be05-bf10c521cc50" />
 <img width="419" alt="Screenshot 2025-03-06 at 9 49 01 PM" src="https://github.com/user-attachments/assets/6aa7d7ff-30ef-4974-9672-41472c2c9b83" />
 
+#### 2. If you were interested in "timing the market" you may be able to use information from these graphs to help understand hot and cold times of the year or see a trend down if you monitor it closely with up to date data.
+
+<img width="470" alt="Screenshot 2025-03-06 at 10 28 09 PM" src="https://github.com/user-attachments/assets/271b1d24-c53c-462d-bfd7-55edaabf9489" />
+
+#### 3. As you move down the malloy file, you will notice there are added "where" filters that helped narrow the scope to either avoid bad data (incorrect zip codes) or filter some properties that are likely not for home buyers (over $1M but could be adjusted by user)
+
 
 ## Conclusion
-With the addition of a few more data points, this data can be further evaluated to be more specific to the buildings of each property and with more calculations, hypothesis can be drawn about the future of some of the zip codes that can help make even more informed decisions. Additionally, some tables could be added to make the data more user friendly i.e. a zip code table would tell users what the name of the zip code is instead of numbers
+The data revealed here should be able to provide someone withan idea of how the real estate in certain areas of Spokane are trending. With the addition of a few more data points, this data can be further evaluated to be more specific to the buildings of each property and with more calculations, hypothesis can be drawn about the future of some of the zip codes that can help make even more informed decisions. Additionally, some tables could be added to make the data more user friendly i.e. a zip code table would tell users what the name of the zip code is instead of numbers
 
 ## Directions on How to Use GitHub Web Editor
 
