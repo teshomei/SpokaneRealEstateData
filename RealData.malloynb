@@ -96,3 +96,147 @@ calculate: YoyChange is PropertySales.gross_sale_price.avg()/lag(PropertySales.g
 --order_by: saleyear asc
 }
 }
+>>>malloy
+
+run: parcels -> {
+where: length(zip) > 4
+where: PropertySales.gross_sale_price > 1000000
+group_by: saleyear is PropertySales.document_date.year
+aggregate: `Amount of Sales` is count(PropertySales.document_date)
+nest: `Year over year increase (%)` is{
+--measure: saleyear is PropertySales.document_date.year
+group_by: zip
+calculate: YoyChange is PropertySales.gross_sale_price.avg()/lag(PropertySales.gross_sale_price.avg())
+}
+}->
+{
+    nest: highestincrease is{
+        --where: saleyear > @2021-01-01
+        select:`Year over year increase (%)`.zip
+        select: change is `Year over year increase (%)`.YoyChange
+        select: saleyear
+        order_by: change desc
+    
+    }
+}
+>>>malloy
+
+run: parcels -> {
+where: length(zip) > 4
+where: PropertySales.gross_sale_price > 1000000
+group_by: saleyear is PropertySales.document_date.year
+aggregate: `Amount of Sales` is count(PropertySales.document_date)
+nest: `Year over year increase (%)` is{
+--measure: saleyear is PropertySales.document_date.year
+group_by: zip
+calculate: YoyChange is PropertySales.gross_sale_price.avg()/lag(PropertySales.gross_sale_price.avg())
+}
+}->
+{
+    nest: highestincrease is{
+        group_by: `Year over year increase (%)`.zip
+        aggregate: averageYoy is `Year over year increase (%)`.YoyChange.avg()
+        --aggregate: Location is PropertySales.
+    
+    }
+}
+>>>malloy
+>>>malloy
+
+run: parcels -> {
+where: length(zip) > 4
+where: PropertySales.gross_sale_price > 1000000
+group_by: saleyear is PropertySales.document_date.year
+aggregate: `Amount of Sales` is count(PropertySales.document_date)
+nest: `Year over year increase (%)` is{
+--measure: saleyear is PropertySales.document_date.year
+group_by: zip
+calculate: YoyChange is PropertySales.gross_sale_price.avg()/lag(PropertySales.gross_sale_price.avg())
+}
+}->
+{
+    nest: highestincrease is{
+        group_by: `Year over year increase (%)`.zip
+        aggregate: averageYoy is `Year over year increase (%)`.YoyChange.avg()
+        --aggregate: Location is PropertySales.
+    
+    }
+}
+>>>markdown
+The following data shows the average yoy increase of properties within a zip code for properties that sold for less than $1M. 
+>>>malloy
+
+run: parcels -> {
+where: length(zip) > 4
+where: PropertySales.gross_sale_price > 1000000
+group_by: saleyear is PropertySales.document_date.year
+aggregate: `Amount of Sales` is count(PropertySales.document_date)
+nest: `Year over year increase (%)` is{
+--measure: saleyear is PropertySales.document_date.year
+group_by: zip
+calculate: YoyChange is PropertySales.gross_sale_price.avg()/lag(PropertySales.gross_sale_price.avg())
+}
+}->
+{
+    nest: highestincrease is{
+        group_by: `Year over year increase (%)`.zip
+        aggregate: averageYoy is `Year over year increase (%)`.YoyChange.avg()
+        --aggregate: Location is PropertySales.
+    
+    }
+}
+>>>markdown
+This shows only the last 3 years to help discover any changes from dialing in the lens where maybe what happened in 2017 isn't as relevant to current trends. 
+>>>malloy
+
+run: parcels -> {
+where: length(zip) > 4
+where: PropertySales.gross_sale_price > 1000000
+where: PropertySales.document_date > @2023-01-01
+group_by: saleyear is PropertySales.document_date.year
+aggregate: `Amount of Sales` is count(PropertySales.document_date)
+nest: `Year over year increase (%)` is{
+--measure: saleyear is PropertySales.document_date.year
+group_by: zip
+calculate: YoyChange is PropertySales.gross_sale_price.avg()/lag(PropertySales.gross_sale_price.avg())
+}
+}->
+{
+    nest: highestincrease is{
+        group_by: `Year over year increase (%)`.zip
+        aggregate: averageYoy is `Year over year increase (%)`.YoyChange.avg()
+        --aggregate: Location is PropertySales.
+    
+    }
+}
+>>>markdown
+One last attempt here to add a line showing the trend over the last 3 years next to the average to provide the data needed to home buyers. 
+>>>malloy
+
+run: parcels -> {
+where: length(zip) > 4
+where: PropertySales.gross_sale_price > 1000000
+where: PropertySales.document_date > @2022-01-01
+group_by: saleyear is PropertySales.document_date.year
+aggregate: `Amount of Sales` is count(PropertySales.document_date)
+nest: `Year over year increase (%)` is{
+group_by: zip
+group_by: trendyear is PropertySales.document_date.year
+calculate: YoyChange is PropertySales.gross_sale_price.avg()/lag(PropertySales.gross_sale_price.avg())
+}
+}->
+{
+    nest: highestincrease is{
+        group_by: `Year over year increase (%)`.zip
+        aggregate: averageYoy is `Year over year increase (%)`.YoyChange.avg()
+        aggregate: MaxYoy is `Year over year increase (%)`.YoyChange.max()
+        limit: 5
+        # line_chart{y.independent.} size = spark
+        nest: `Three year trend` is{
+            group_by: `Year over year increase (%)`.trendyear
+            aggregate:`Yearly Increase` is `Year over year increase (%)`.YoyChange.avg()
+        
+        }
+    
+    }
+}
