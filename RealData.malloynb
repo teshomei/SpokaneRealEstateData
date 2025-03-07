@@ -192,7 +192,7 @@ This shows only the last 3 years to help discover any changes from dialing in th
 run: parcels -> {
 where: length(zip) > 4
 where: PropertySales.gross_sale_price > 1000000
-where: PropertySales.document_date > @2023-01-01
+where: PropertySales.document_date > @2022-01-01
 group_by: saleyear is PropertySales.document_date.year
 aggregate: `Amount of Sales` is count(PropertySales.document_date)
 nest: `Year over year increase (%)` is{
