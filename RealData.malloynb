@@ -1,3 +1,5 @@
+>>>markdown
+Through analysis of real estate data provided by Spokane County, this notebook takes us through the process of finding zip codes within Spokane that are increasing over time. This data can help home buyers determine which areas may be increasing or decreasing over time or relative to other zip codes. 
 >>>malloy
 source: PropertySales is duckdb.table('Property*.csv')extend{
     primary_key:Parcel
@@ -6,21 +8,91 @@ source: PropertySales is duckdb.table('Property*.csv')extend{
 source: parcels is duckdb.table('./Parcels2.csv')extend{
     primary_key:`Parcel Number`
     join_one: PropertySales on `Parcel Number` = PropertySales.Parcel
-
+    dimension: zip is substr(site_zip,0,6)
 }
+>>>markdown
+Testing to confirm join is working as intended.
 >>>malloy
 run: parcels ->{
-    where: `Parcel Number` = "25203.9015"
+    where: site_address = "Test Address Here"
     select: PropertySales.document_date
 
 }
+>>>markdown
+Exposing zip codes where the most sales occurred in 2023.
 >>>malloy
 run: parcels ->{
+    where: PropertySales.document_date > @2023
+    group_by: zip
+    aggregate: Sales is PropertySales.count()
+}
+>>>malloy
+run: parcels ->{
+    --where: site_zip = "99203"
+    group_by: zip
+    aggregate: SalesPrice is avg(PropertySales.gross_sale_price)
+    order_by: SalesPrice
+}
+>>>malloy
 
-     index: *
-    } -> {
-    where: fieldValue ~ r'""'
-    select: *
-  
-    limit: 15
+run: parcels ->{
+    where: length(zip) > 4
+    group_by:zip
+    aggregate: totalsales is PropertySales.count()
+    # line_chart{y.independent}
+    nest: by_year is{
+    group_by: PropertySales.document_date.month
+    aggregate: salesprice is avg(PropertySales.gross_sale_price)
+
     }
+}
+>>>malloy
+
+run: parcels -> {
+    group_by: zip
+    nest: movingavg is {
+        group_by: sale_month is PropertySales.document_date.month
+        aggregate: avgsales is avg(PropertySales.gross_sale_price)
+        calculate: moving_avg_sales is avg_moving(avgsales, 3)
+        order_by: sale_month
+    }
+}
+>>>malloy
+
+run: parcels -> {
+    where: length(zip) > 4
+    group_by: zip
+    # line_chart{y.independent}
+    nest: movingavg is {
+        group_by: sale_month is PropertySales.document_date.month
+        aggregate: avgsales is avg(PropertySales.gross_sale_price)
+        calculate: moving_avg_sales is avg_moving(avgsales, 10)
+        order_by: sale_month
+    }
+}
+>>>malloy
+
+run: parcels -> {
+where: length(zip) > 4
+group_by: zip
+aggregate: `Amount of Sales` is count(PropertySales.document_date)
+# line_chart{y.independent}
+nest: `Year over year increase (%)` is{
+group_by: saleyear is PropertySales.document_date.year
+calculate: YoyChange is PropertySales.gross_sale_price.avg()/lag(PropertySales.gross_sale_price.avg())
+--order_by: saleyear asc
+}
+}
+>>>malloy
+
+run: parcels -> {
+where: length(zip) > 4
+group_by: zip
+aggregate: `Amount of Sales` is count(PropertySales.document_date)
+# line_chart{y.independent}
+nest: `Year over year increase (%)` is{
+group_by: saleyear is PropertySales.document_date.year
+calculate: YoyChange is PropertySales.gross_sale_price.avg()/lag(PropertySales.gross_sale_price.avg())
+--order_by: saleyear asc
+}
+}

@@ -1,4 +1,4 @@
-﻿OBJECTID,Parcel,vacant_land_flag,excise_nbr,gross_sale_price,document_date,prop_use_code,SHAPESTArea,SHAPESTLength
+﻿OBJECTID,Parcel,vacant_land_flag,excise_nbr,gross_sale_price,document_date,prop_use_code,ShapeSTArea,ShapeSTLength
 2928,35204.1515,,PLACEHOLDER,0,,91,34.558638851334,29.9854803322369
 2929,35204.1515,,PLACEHOLDER,0,,1,34.5592378605527,29.985838474974
 2930,55156.9186,N,201800232,12050000,2018/01/04 08:00:00+00,65,133807.316725317,1724.80560258877
